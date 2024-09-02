@@ -14,7 +14,7 @@ X = torch.tensor([[1],[2],[3],[4]], dtype=torch.float32)
 Y = torch.tensor([[2],[4],[6],[8]], dtype=torch.float32)
 
 text_x = torch.tensor([5],dtype=torch.float32)
-n_sample , n_fiture = X.shape()
+n_sample , n_fiture = X.shape
 
 inputsize = n_fiture
 outputsize = n_fiture
