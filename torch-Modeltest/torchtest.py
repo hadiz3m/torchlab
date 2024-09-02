@@ -22,7 +22,7 @@ outputsize = n_fiture
 model = nn.Linear(inputsize,outputsize)
 
 print(f'predict befor training: f(5) = {model(text_x).item():.3f}')
-x_input = torch.tensor.d
+
 learningrate = 0.01
 n_iter = 100
 loss = nn.MSELoss()
