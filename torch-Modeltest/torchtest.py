@@ -23,7 +23,7 @@ model = nn.Linear(inputsize,outputsize)
 
 print(f'predict befor training: f(5) = {model(text_x).item():.3f}')
 
-learningrate = 0.01
+learningrate = 0.1
 n_iter = 100
 loss = nn.MSELoss()
 
