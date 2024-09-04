@@ -13,7 +13,7 @@ import torch.nn as nn
 X = torch.tensor([[1],[2],[3],[4]], dtype=torch.float32)
 Y = torch.tensor([[2],[4],[6],[8]], dtype=torch.float32)
 
-text_x = torch.tensor([5],dtype=torch.float32)
+text_x = torch.tensor([12],dtype=torch.float32)
 n_sample , n_fiture = X.shape
 
 inputsize = n_fiture
@@ -24,17 +24,18 @@ model = nn.Linear(inputsize,outputsize)
 print(f'predict befor training: f(5) = {model(text_x).item():.3f}')
 
 learningrate = 0.1
-n_iter = 1000
+n_iter = 300
 loss = nn.MSELoss()
 
 optimizer = torch.optim.SGD(model.parameters(),lr=learningrate)
 
 
 for epoch in range(n_iter):
-    print('X: ',X)
+    # print('X: ',X)
     y_perd = model(X)
 
-    print('Y: ',Y,y_perd)
+    # print('Y: ',Y,y_perd)
+   
     l = loss(Y,y_perd)
 
     l.backward()

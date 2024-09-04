@@ -1,53 +1,39 @@
-# # program to capture single image from webcam in python 
-
-# # importing OpenCV library 
-# import cv2 as cv
-
-# # initialize the camera 
-# # If you have multiple camera connected with 
-# # current device, assign a value in cam_port 
-# # variable according to that 
-# cam_port = 0
-# cam = cv.VideoCapture(cam_port) 
-
-# # reading the input using the camera 
-# result, image = cam.read() 
-
-# # If image will detected without any error, 
-# # show result 
-# if result: 
-
-# 	# showing result, it take frame name and image 
-# 	# output 
-# 	cv.imshow("GeeksForGeeks", image) 
-
-# 	# saving image in local storage 
-# 	cv.imwrite("GeeksForGeeks.png", image) 
-
-# 	# If keyboard interrupt occurs, destroy image 
-# 	# window 
-# 	cv.waitKey(0) 
-# 	cv.destroyWindow("GeeksForGeeks") 
-
-# # If captured image is corrupted, moving to else part 
-# else: 
-# 	print("No image detected. Please! try again") 
-
-
 # import the opencv library 
 import cv2 
 # Import necessary libraries
 import torch
+import torch.nn as nn
 from PIL import Image
 import torchvision.transforms as transforms
+import numpy
 
-# Read a PIL image
-# image = Image.open('iceland.jpg')
 
+class mymodel(nn.Module):
+	def __init__(self) -> None:
+		super().__init__()
+		
+		self.inputimage = nn.Linear(921600,100)
+		self.func = nn.ReLU()
+		self.prob = nn.Softmax(5)
+
+	def forward(self,x):
+		x= self.inputimage(x)
+		x= self.func(x)
+		x= self.prob(x)
+		return x
+	
+
+model = mymodel()
+model.train()
+
+loss = nn.MSELoss()
+optimazer = torch.optim.SGD(model.parameters,lr=0.001)
 
 
 # define a video capture object 
 vid = cv2.VideoCapture(0) 
+
+epoch = 0 
 
 while(True): 
 	
@@ -56,34 +42,30 @@ while(True):
 	ret, frame = vid.read() 
 
 	# Display the resulting frame 
-	# cv2.imshow('frame', frame) 
-
-
-	# Define a transform to convert PIL 
-	# image to a Torch tensor
-	transform = transforms.Compose([
-		transforms.ToTensor()
-		# transforms.PILToTensor()
-	])
-
-	# transform = transforms.PILToTensor()
-	# Convert the PIL image to Torch tensor
-
+	cv2.imshow('frame', frame) 
 	image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-	imagePIL = Image.fromarray(image)
-	# imagePIL.show()
-
-	img_tensor = transform(image)
-
-	# print the converted Torch tensor
-	print(img_tensor)
-
-	# the 'q' button is set as the 
-	# quitting button you may use any 
-	# desired button of your choice 
+	myiimmag = image.reshape(-1)
+	# print(myiimmag)
+	myiimmag = torch.tensor(myiimmag,dtype=torch.int32)
+	
 	if cv2.waitKey(1) & 0xFF == ord('q'): 
 		break
+
+	Y_predict = model.forward(myiimmag)
+
+	print(Y_predict)
+	l = loss(Y_predict,Y_predict)
+	l.backward()
+
+	epoch+=1
+
+	optimazer.step()
+
+	optimazer.zero_grad()
+
+	if epoch % 5 == 0:
+		[w,b] = model.parameters()
+		print(f' epoch {epoch+1} : w={w[0][0].item():3f} , loss = {l:.8f} ')
 
 # After the loop release the cap object 
 vid.release() 
